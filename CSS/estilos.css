@@ -13,10 +13,24 @@ h1 {
   color: white;
 }
 
-img {
-  width: 500px;
-  height: 500px;
+.img-pokemon {
+  width: 300px;
+  height: 300px;
+}
+
+.select-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+  margin-top: 20px;
+  border-radius: 10px;
   padding: 30px;
+  background-color: white;
+  box-shadow: 0 3px 15px rgb(54, 115, 161);
 }
 
 .pokemon-container {
@@ -35,7 +49,7 @@ img {
   border-radius: 10px;
   padding: 30px;
   background-color: white;
-  box-shadow: 0 3px 15px rgba(100, 100, 100, 0.5);
+  box-shadow: 0 3px 15px rgb(54, 115, 161);
 }
 
 .img-container {
@@ -117,4 +131,17 @@ img {
   display: grid;
   grid-template-columns: 1fr 2fr;
   text-align: left;
+}
+
+.to-top-button {
+  font-size: 18px;
+  display: none;
+  position: fixed; 
+  bottom: 20px; 
+  right: 30px; 
+  z-index: 99; 
+  border-radius: 10px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 3px 15px rgb(54, 115, 161);
 }

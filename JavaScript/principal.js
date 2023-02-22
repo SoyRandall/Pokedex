@@ -1,29 +1,36 @@
 const pokemonContainer = document.querySelector(".pokemon-container");
-const previous = document.querySelector("#previous");
-const next = document.querySelector("#next");
+const buscar = document.getElementById("buscar");
+const limpiar = document.getElementById("limpiar");
+const spinner = document.getElementById("spinner");
 
-let id = 1;
+buscar.addEventListener("click", () => {
+    var inicio = document.getElementById("desde").value;
+    var final = document.getElementById("hasta").value;
 
-previous.addEventListener('click', () => {
-    if (id != 1) {
-        id = id - 1;
-        removeChildNodes(pokemonContainer);
-        buscarPokemon(id);
-    }
-});
+    spinner.style.display = "block";
 
-next.addEventListener('click', () => {
-    id = id + 1;
     removeChildNodes(pokemonContainer);
-    buscarPokemon(id);
+    buscarPokemones(inicio, final);
+
+    spinner.style.display = "none";
 });
 
-async function buscarPokemon(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
-    const data = await res.json();
+limpiar.addEventListener("click", () => {
+    document.getElementById("desde").value = 1;
+    document.getElementById("hasta").value = 1;
+    removeChildNodes(pokemonContainer);
+});
 
-    const res2 = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-    const info = await res2.json();
+async function buscarInfo(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    const info = await res.json();
+
+    return info;
+}
+
+async function buscarDatos(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    const info = await res.json();
 
     const filtrarEsp = info.flavor_text_entries.filter(
         (element) => element.language.name === "es"
@@ -31,13 +38,40 @@ async function buscarPokemon(id) {
 
     const entradaPokedex = filtrarEsp[Math.floor(Math.random() * filtrarEsp.length)];
 
-    console.log(data);
-    console.log(entradaPokedex);
-
-    crearPokemon(data, entradaPokedex);
+    return entradaPokedex;
 }
 
-function crearPokemon(pokemon, info) {
+async function buscarPokemon(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
+    const data = await res.json();
+
+    return data;
+}
+
+async function buscarPokemones(inicio, final) {
+    const listaPokemon = [];
+    const listaDatos = [];
+    const listaInfo = [];
+    let contadorImagen = inicio;
+
+    for (let i = inicio; i <= final; i++) {
+        var pokemon = await buscarPokemon(i);
+        var datos = await buscarDatos(i);
+        var info = await buscarInfo(i);
+
+        listaPokemon.push(pokemon);
+        listaDatos.push(datos);
+        listaInfo.push(info);
+
+    }
+
+    for (let i = 0; i <= listaPokemon.length - 1; i++) {
+        crearPokemon(listaPokemon[i], listaDatos[i], contadorImagen, listaInfo[i]);
+        contadorImagen++;
+    }
+}
+
+function crearPokemon(pokemon, entradaPokedex, id, info) {
 
     const flipCard = document.createElement("div");
     flipCard.classList.add("flip-card");
@@ -54,6 +88,8 @@ function crearPokemon(pokemon, info) {
     spriteContainer.classList.add("img-container");
 
     const sprite = document.createElement("img");
+    sprite.classList.add("img-pokemon");
+    // sprite.src = pokemon.sprites.other.official_artwork.front_default;
     sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
     spriteContainer.appendChild(sprite);
@@ -75,13 +111,7 @@ function crearPokemon(pokemon, info) {
 
     const pokedexEntry = document.createElement("p");
     pokedexEntry.classList.add("pokedex-entry");
-    pokedexEntry.textContent = info.flavor_text;
-
-    const separador = document.createElement("hr");
-
-    const cbTitle2 = document.createElement("h5");
-    cbTitle2.classList.add("cbTitle");
-    cbTitle2.textContent = "Atributos de Combate";
+    pokedexEntry.textContent = entradaPokedex.flavor_text;
 
     const altura = document.createElement("p");
     altura.classList.add("datos");
@@ -91,6 +121,10 @@ function crearPokemon(pokemon, info) {
     peso.classList.add("datos");
     peso.textContent = "📌 Peso: " + pokemon.weight / 10 + " kilos";
 
+    const especie = document.createElement("p");
+    especie.classList.add("datos");
+    especie.textContent = "📌 Especie: " + info.genera[5].genus;
+
     card.appendChild(spriteContainer);
     card.appendChild(number);
     card.appendChild(name);
@@ -99,9 +133,7 @@ function crearPokemon(pokemon, info) {
     cardBack.appendChild(pokedexEntry);
     cardBack.appendChild(altura);
     cardBack.appendChild(peso);
-    cardBack.appendChild(separador);
-    cardBack.appendChild(cbTitle2);
-    cardBack.appendChild(progressBars(pokemon.stats));
+    cardBack.appendChild(especie);
 
     cardContainer.appendChild(card);
     cardContainer.appendChild(cardBack);
@@ -113,41 +145,3 @@ function removeChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
-
-function progressBars(stats) {
-    const statsContainer = document.createElement("div");
-    statsContainer.classList.add("stats-container");
-  
-    for (let i = 0; i < 3; i++) {
-      const stat = stats[i];
-  
-      const statPercent = stat.base_stat / 2 + "%";
-      const statContainer = document.createElement("stat-container");
-      statContainer.classList.add("stat-container");
-  
-      const statName = document.createElement("p");
-      statName.textContent = stat.stat.name;
-  
-      const progress = document.createElement("div");
-      progress.classList.add("progress");
-  
-      const progressBar = document.createElement("div");
-      progressBar.classList.add("progress-bar");
-      progressBar.setAttribute("aria-valuenow", stat.base_stat);
-      progressBar.setAttribute("aria-valuemin", 0);
-      progressBar.setAttribute("aria-valuemax", 200);
-      progressBar.style.width = statPercent;
-  
-      progressBar.textContent = stat.base_stat;
-  
-      progress.appendChild(progressBar);
-      statContainer.appendChild(statName);
-      statContainer.appendChild(progress);
-  
-      statsContainer.appendChild(statContainer);
-    }
-  
-    return statsContainer;
-  }
-
-buscarPokemon(id);
