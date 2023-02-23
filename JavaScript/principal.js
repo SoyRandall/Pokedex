@@ -1,23 +1,64 @@
 const pokemonContainer = document.querySelector(".pokemon-container");
 const buscar = document.getElementById("buscar");
 const limpiar = document.getElementById("limpiar");
-const spinner = document.getElementById("spinner");
+const bucarPor = document.getElementById("buscarPor");
+let inicio = 0;
+let final = 0;
+
+buscarPor.addEventListener("change", () => {
+    var opcion = document.getElementById("buscarPor").value;
+
+    switch (opcion) {
+        case "1":
+            inicio= 1;
+            final = 1008;
+            break;
+        case "2":
+            inicio= 1;
+            final = 151;
+            break;
+        case "3":
+            inicio= 152;
+            final = 251;
+            break;
+        case "4":
+            inicio= 252;
+            final = 386;
+            break;
+        case "5":
+            inicio= 387;
+            final = 494;
+            break;
+        case "6":
+            inicio= 495;
+            final = 649;
+            break;
+        case "7":
+            inicio= 650;
+            final = 721;
+            break;
+        case "8":
+            inicio= 722;
+            final = 809;
+            break;
+        case "9":
+            inicio= 810;
+            final = 905;
+            break;
+        case "10":
+            inicio= 906;
+            final = 1008;
+            break;
+    }
+});
 
 buscar.addEventListener("click", () => {
-    var inicio = document.getElementById("desde").value;
-    var final = document.getElementById("hasta").value;
-
-    spinner.style.display = "block";
-
     removeChildNodes(pokemonContainer);
     buscarPokemones(inicio, final);
-
-    spinner.style.display = "none";
 });
 
 limpiar.addEventListener("click", () => {
-    document.getElementById("desde").value = 1;
-    document.getElementById("hasta").value = 1;
+    document.getElementById("buscarPor").value = "0";
     removeChildNodes(pokemonContainer);
 });
 
@@ -31,12 +72,21 @@ async function buscarInfo(id) {
 async function buscarDatos(id) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
     const info = await res.json();
+    var entradaPokedex = [];
 
     const filtrarEsp = info.flavor_text_entries.filter(
         (element) => element.language.name === "es"
     );
 
-    const entradaPokedex = filtrarEsp[Math.floor(Math.random() * filtrarEsp.length)];
+    if (filtrarEsp.length === 0) {
+        const filtrarEng = info.flavor_text_entries.filter(
+            (element) => element.language.name === "en"
+        );
+        entradaPokedex = filtrarEng[Math.floor(Math.random() * filtrarEng.length)];
+    }
+    else {
+        entradaPokedex = filtrarEsp[Math.floor(Math.random() * filtrarEsp.length)];
+    }
 
     return entradaPokedex;
 }
@@ -62,6 +112,10 @@ async function buscarPokemones(inicio, final) {
         listaPokemon.push(pokemon);
         listaDatos.push(datos);
         listaInfo.push(info);
+
+        console.log(pokemon);
+        console.log(datos);
+        console.log(info);
 
     }
 
@@ -102,6 +156,16 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
     name.classList.add("name");
     name.textContent = pokemon.name;
 
+    const typeContainer = document.createElement("div");
+    typeContainer.classList.add("types-container");
+
+    const type = document.createElement("label");
+    type.classList.add("types");
+    pokemon.types.forEach(function(tipo) {
+        type.textContent = tipo.type.name;
+        typeContainer.appendChild(type);
+    });
+
     const cardBack = document.createElement("div");
     cardBack.classList.add("pokemon-block-back");
 
@@ -111,7 +175,13 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
 
     const pokedexEntry = document.createElement("p");
     pokedexEntry.classList.add("pokedex-entry");
-    pokedexEntry.textContent = entradaPokedex.flavor_text;
+
+    try {
+        pokedexEntry.textContent = entradaPokedex.flavor_text;
+    }
+    catch {
+        pokedexEntry.textContent = "Sin registro...";
+    }
 
     const altura = document.createElement("p");
     altura.classList.add("datos");
@@ -123,11 +193,18 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
 
     const especie = document.createElement("p");
     especie.classList.add("datos");
-    especie.textContent = "📌 Especie: " + info.genera[5].genus;
+
+    try {
+        especie.textContent = "📌 Especie: " + info.genera[5].genus;
+    }
+    catch {
+        especie.textContent = "📌 Especie: Sin registro...";
+    }
 
     card.appendChild(spriteContainer);
     card.appendChild(number);
     card.appendChild(name);
+    card.appendChild(typeContainer);
 
     cardBack.appendChild(cbTitle);
     cardBack.appendChild(pokedexEntry);

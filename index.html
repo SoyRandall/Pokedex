@@ -23,13 +23,20 @@
             <!-- <div class="row col-md-2">
                 <img src="./Imagenes/pokemon-logo.png" alt="">
             </div> -->
-            <div class="row col-md-2 m-1">
-                <label for="">Buscar desde:</label>
-                <input type="number" class="form-control" id="desde" value="1" min="1" max="1008">
-            </div>
-            <div class="row col-md-2 m-1">
-                <label for="">Hasta el:</label>
-                <input type="number" class="form-control" id="hasta" value="1" min="1" max="1008">
+            <div class="row col-md-3 m-1 mt-4">
+                <select id="buscarPor" class="form-select" aria-label="Default select example">
+                    <option selected disabled value="0">Región: </option>
+                    <option value="1">Todas</option>
+                    <option value="2">Kanto (1ª gen.)</option>
+                    <option value="3">Johto (2ª gen.)</option>
+                    <option value="4">Hoenn (3ª gen.)</option>
+                    <option value="5">Sinnoh (4ª gen.)</option>
+                    <option value="6">Teselia (5ª gen.)</option>
+                    <option value="7">Kalos (6ª gen.)</option>
+                    <option value="8">Alola (7ª gen.)</option>
+                    <option value="9">Galar/Hisui (8ª gen.)</option>
+                    <option value="10">Paldea (9ª gen.)</option>
+                  </select>
             </div>
             <div class=" row col-md-2 m-1 mt-4">
                 <button type="button" class="btn btn-primary" id="buscar"><i class="bi bi-search"></i> Buscar</button>
@@ -39,9 +46,6 @@
                     Limpiar</button>
             </div>
         </div>
-    </div>
-    <div id="spinner" class="spinner-border text-light" role="status">
-        <span class="visually-hidden">Loading...</span>
     </div>
     <div class="pokemon-container"></div>
     <script src="./JavaScript/principal.js"></script>
