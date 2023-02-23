@@ -1,52 +1,59 @@
+//#region Declaracion de Variables
+
 const pokemonContainer = document.querySelector(".pokemon-container");
 const buscar = document.getElementById("buscar");
 const limpiar = document.getElementById("limpiar");
 const bucarPor = document.getElementById("buscarPor");
+
+let progressContainer = document.querySelector(".progress-container");
+
 let inicio = 0;
 let final = 0;
+
+//#endregion
 
 buscarPor.addEventListener("change", () => {
     var opcion = document.getElementById("buscarPor").value;
 
     switch (opcion) {
         case "1":
-            inicio= 1;
+            inicio = 1;
             final = 1008;
             break;
         case "2":
-            inicio= 1;
+            inicio = 1;
             final = 151;
             break;
         case "3":
-            inicio= 152;
+            inicio = 152;
             final = 251;
             break;
         case "4":
-            inicio= 252;
+            inicio = 252;
             final = 386;
             break;
         case "5":
-            inicio= 387;
+            inicio = 387;
             final = 494;
             break;
         case "6":
-            inicio= 495;
+            inicio = 495;
             final = 649;
             break;
         case "7":
-            inicio= 650;
+            inicio = 650;
             final = 721;
             break;
         case "8":
-            inicio= 722;
+            inicio = 722;
             final = 809;
             break;
         case "9":
-            inicio= 810;
+            inicio = 810;
             final = 905;
             break;
         case "10":
-            inicio= 906;
+            inicio = 906;
             final = 1008;
             break;
     }
@@ -54,12 +61,15 @@ buscarPor.addEventListener("change", () => {
 
 buscar.addEventListener("click", () => {
     removeChildNodes(pokemonContainer);
+    progressContainer.style.display = `grid`;
     buscarPokemones(inicio, final);
 });
 
 limpiar.addEventListener("click", () => {
     document.getElementById("buscarPor").value = "0";
     removeChildNodes(pokemonContainer);
+    inicio = 0;
+    final = 0;
 });
 
 async function buscarInfo(id) {
@@ -103,6 +113,8 @@ async function buscarPokemones(inicio, final) {
     const listaDatos = [];
     const listaInfo = [];
     let contadorImagen = inicio;
+    let progressValue = 0;
+    let progressEndValue = final - inicio + 1;
 
     for (let i = inicio; i <= final; i++) {
         var pokemon = await buscarPokemon(i);
@@ -113,11 +125,15 @@ async function buscarPokemones(inicio, final) {
         listaDatos.push(datos);
         listaInfo.push(info);
 
-        console.log(pokemon);
-        console.log(datos);
-        console.log(info);
+        // console.log(pokemon);
+        // console.log(datos);
+        // console.log(info);
 
+        progressValue++;
+        progressContainer.textContent = `Pokémons encontrados: ${progressValue} de ${progressEndValue} 👀`;
     }
+
+    progressContainer.style.display = `none`;
 
     for (let i = 0; i <= listaPokemon.length - 1; i++) {
         crearPokemon(listaPokemon[i], listaDatos[i], contadorImagen, listaInfo[i]);
@@ -143,7 +159,7 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
 
     const sprite = document.createElement("img");
     sprite.classList.add("img-pokemon");
-    // sprite.src = pokemon.sprites.other.official_artwork.front_default;
+    // sprite.src = pokemon.sprites.other.official-artwork.front_default;
     sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
     spriteContainer.appendChild(sprite);
@@ -157,12 +173,92 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
     name.textContent = pokemon.name;
 
     const typeContainer = document.createElement("div");
-    typeContainer.classList.add("types-container");
 
-    const type = document.createElement("label");
-    type.classList.add("types");
-    pokemon.types.forEach(function(tipo) {
-        type.textContent = tipo.type.name;
+    if (pokemon.types.length > 1) {
+        typeContainer.classList.add("types-container2");
+    }
+    else {
+        typeContainer.classList.add("types-container1");
+    }
+
+    pokemon.types.forEach(function (tipo) {
+        const type = document.createElement("label");
+
+        switch (tipo.type.name) {
+            case "steel":
+                type.classList.add("types", "typesSteel");
+                type.textContent = "Acero";
+                break;
+            case "water":
+                type.classList.add("types", "typesWater");
+                type.textContent = "Agua";
+                break;
+            case "bug":
+                type.classList.add("types", "typesBug");
+                type.textContent = "Bicho";
+                break;
+            case "dragon":
+                type.classList.add("types", "typesDragon");
+                type.textContent = "Dragón";
+                break;
+            case "electric":
+                type.classList.add("types", "typesElectric");
+                type.textContent = "Eléctrico";
+                break;
+            case "ghost":
+                type.classList.add("types", "typesGhost");
+                type.textContent = "Fantasma";
+                break;
+            case "fire":
+                type.classList.add("types", "typesFire");
+                type.textContent = "Fuego";
+                break;
+            case "fairy":
+                type.classList.add("types", "typesFairy");
+                type.textContent = "Hada";
+                break;
+            case "ice":
+                type.classList.add("types", "typesIce");
+                type.textContent = "Hielo";
+                break;
+            case "fighting":
+                type.classList.add("types", "typesFighting");
+                type.textContent = "Lucha";
+                break;
+            case "normal":
+                type.classList.add("types", "typesNormal");
+                type.textContent = "Normal";
+                break;
+            case "grass":
+                type.classList.add("types", "typesGrass");
+                type.textContent = "Planta";
+                break;
+            case "psychic":
+                type.classList.add("types", "typesPsychic");
+                type.textContent = "Psíquico";
+                break;
+            case "rock":
+                type.classList.add("types", "typesRock");
+                type.textContent = "Roca";
+                break;
+            case "dark":
+                type.classList.add("types", "typesDark");
+                type.textContent = "Siniestro";
+                break;
+            case "ground":
+                type.classList.add("types", "typesGround");
+                type.textContent = "Tierra";
+                break;
+            case "poison":
+                type.classList.add("types", "typesPoison");
+                type.textContent = "Veneno";
+                break;
+            case "flying":
+                type.classList.add("types", "typesFlying");
+                type.textContent = "Volador";
+                break;
+        }
+
         typeContainer.appendChild(type);
     });
 
