@@ -11,6 +11,8 @@ let waitContainer = document.querySelector(".wait-container");
 
 let inicio = 0;
 let final = 0;
+let inicioEspecial = 0;
+let finalEspecial = 0;
 let progressValue = 0;
 let progressEndValue = 0;
 
@@ -19,90 +21,101 @@ let progressEndValue = 0;
 //#region Eventos
 
 buscarPor.addEventListener("change", () => {
+
     var opcion = document.getElementById("buscarPor").value;
+    inicioEspecial = 0;
+    finalEspecial = 0;
 
     switch (opcion) {
         case "1":
             inicio = 1;
-            final = 1008;
-            break;
-        case "2":
-            inicio = 1;
             final = 151;
             break;
-        case "3":
+        case "2":
             inicio = 152;
             final = 251;
             break;
-        case "4":
+        case "3":
             inicio = 252;
             final = 386;
+            inicioEspecial = 10001;
+            finalEspecial = 10003;
             break;
-        case "5":
+        case "4":
             inicio = 387;
             final = 494;
+            inicioEspecial = 10004;
+            finalEspecial = 10012;
             break;
-        case "6":
+        case "5":
             inicio = 495;
             final = 649;
+            inicioEspecial = 10005;
+            finalEspecial = 10024;
             break;
-        case "7":
+        case "6":
             inicio = 650;
             final = 721;
+            inicioEspecial = 10025;
+            finalEspecial = 10090;
             break;
-        case "8":
+        case "7":
             inicio = 722;
             final = 809;
+            inicioEspecial = 10091;
+            finalEspecial = 10157;
             break;
-        case "9":
+        case "8":
             inicio = 810;
             final = 905;
+            inicioEspecial = 10160;
+            finalEspecial = 10249;
             break;
-        case "10":
+        case "9":
             inicio = 906;
             final = 1008;
+            inicioEspecial = 10250;
+            finalEspecial = 10252;
             break;
-        case "12":
-            inicio = 10033;
-            final = 10090;
-            break;            
-        case "13":
-            inicio = 10091;
-            final = 10115;
+        case "10":
+            inicio = 10252;
+            final = 10252;
             break;
     }
 });
 
 buscar.addEventListener("click", () => {
-    removeChildNodes(pokemonContainer);
-    waitContainer.style.display = `grid`;
-    buscarPokemones(inicio, final);
+
+    var opcion = document.getElementById("buscarPor").value;
+
+    if (opcion === "0") {
+        progressContainer.textContent = "Por favor selecciona una lista de Pokémon.";
+        waitContainer.style.display = `grid`;
+    }
+    else {
+        eliminarCartas(pokemonContainer);
+        waitContainer.style.display = `grid`;
+        buscarPokemones(inicio, final);
+    }
 });
 
 limpiar.addEventListener("click", () => {
     waitContainer.style.display = `none`;
     document.getElementById("buscarPor").value = "0";
-    removeChildNodes(pokemonContainer);
+    eliminarCartas(pokemonContainer);
     inicio = 0;
     final = 0;
+    inicioEspecial = 0;
+    finalEspecial = 0;
     progressValue = 0;
     progressEndValue = 0;
 });
 
 //#endregion
 
-//#region Funciones buscar API
+//#region Funciones de apoyo
 
-async function buscarInfo(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-    const info = await res.json();
-
-    return info;
-}
-
-async function buscarDatos(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-    const info = await res.json();
+function desPokedex(info) {
     var entradaPokedex = [];
 
     const filtrarEsp = info.flavor_text_entries.filter(
@@ -122,86 +135,7 @@ async function buscarDatos(id) {
     return entradaPokedex;
 }
 
-async function buscarPokemon(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
-    const data = await res.json();
-
-    return data;
-}
-
-async function buscarPokemones(inicio, final) {
-    const listaPokemon = [];
-    const listaDatos = [];
-    const listaInfo = [];
-    let contadorImagen = inicio;
-    progressValue = 0;
-    progressEndValue = final - inicio + 1;
-
-    for (let i = inicio; i <= final; i++) {
-        var pokemon = await buscarPokemon(i);
-
-        if (inicio < 10000) {
-            var datos = await buscarDatos(i);
-            var info = await buscarInfo(i);
-        }
-        else {
-            var datos = await buscarDatos(pokemon.species.name);
-            var info = await buscarInfo(pokemon.species.name);
-        }
-
-        listaPokemon.push(pokemon);
-        listaDatos.push(datos);
-        listaInfo.push(info);
-
-        // console.log(listaPokemon);
-        // console.log(datos);
-        console.log(info);
-
-        progressValue++;
-        progressContainer.textContent = `Pokémon encontrados: ${progressValue} de ${progressEndValue}`;
-    }
-
-    waitContainer.style.display = `none`;
-
-    for (let i = 0; i <= listaPokemon.length - 1; i++) {
-        crearPokemon(listaPokemon[i], listaDatos[i], contadorImagen, listaInfo[i]);
-        contadorImagen++;
-    }
-}
-
-//#endregion
-
-function crearPokemon(pokemon, entradaPokedex, id, info) {
-
-    const flipCard = document.createElement("div");
-    flipCard.classList.add("flip-card");
-
-    const cardContainer = document.createElement("div");
-    cardContainer.classList.add("card-container");
-
-    flipCard.appendChild(cardContainer);
-
-    const card = document.createElement("div");
-    card.classList.add("pokemon-block");
-
-    const spriteContainer = document.createElement("div");
-    spriteContainer.classList.add("img-container");
-
-    const sprite = document.createElement("img");
-    sprite.classList.add("img-pokemon");
-    // sprite.src = pokemon.sprites.other.official-artwork.front_default;
-    sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-
-    spriteContainer.appendChild(sprite);
-
-    const number = document.createElement("p");
-    number.classList.add("number");
-    number.textContent = `#${pokemon.id.toString().padStart(4, 0)}`;
-
-    const name = document.createElement("p");
-    name.classList.add("name");
-    name.textContent = pokemon.name;
-
+function agregarTipos(pokemon) {
     const typeContainer = document.createElement("div");
 
     if (pokemon.types.length > 1) {
@@ -292,6 +226,40 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
         typeContainer.appendChild(type);
     });
 
+    return typeContainer;
+}
+
+function crearCard(pokemon, imagen) {
+    const card = document.createElement("div");
+    card.classList.add("pokemon-block");
+
+    const spriteContainer = document.createElement("div");
+    spriteContainer.classList.add("img-container");
+
+    const sprite = document.createElement("img");
+    sprite.classList.add("img-pokemon");
+    // sprite.src = pokemon.sprites.other.official-artwork.front_default;
+    sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${imagen}.png`;
+
+    spriteContainer.appendChild(sprite);
+
+    const number = document.createElement("p");
+    number.classList.add("number");
+    number.textContent = `#${pokemon.id.toString().padStart(4, 0)}`;
+
+    const name = document.createElement("p");
+    name.classList.add("name");
+    name.textContent = pokemon.name;
+
+    card.appendChild(spriteContainer);
+    card.appendChild(number);
+    card.appendChild(name);
+    card.appendChild(agregarTipos(pokemon));
+
+    return card;
+}
+
+function crearCardBack(pokemon, info) {
     const cardBack = document.createElement("div");
     cardBack.classList.add("pokemon-block-back");
 
@@ -303,7 +271,7 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
     pokedexEntry.classList.add("pokedex-entry");
 
     try {
-        pokedexEntry.textContent = entradaPokedex.flavor_text;
+        pokedexEntry.textContent = desPokedex(info).flavor_text;
     }
     catch {
         pokedexEntry.textContent = "Sin registro...";
@@ -327,24 +295,108 @@ function crearPokemon(pokemon, entradaPokedex, id, info) {
         especie.textContent = "📌 Especie: Sin registro...";
     }
 
-    card.appendChild(spriteContainer);
-    card.appendChild(number);
-    card.appendChild(name);
-    card.appendChild(typeContainer);
+    const habitad = document.createElement("p");
+    habitad.classList.add("datos");
+
+    try {
+        habitad.textContent = "📌 Hábitad: " + info.habitat.name;
+    }
+    catch {
+        habitad.textContent = "📌 Hábitad: Sin registro...";
+    }
 
     cardBack.appendChild(cbTitle);
     cardBack.appendChild(pokedexEntry);
     cardBack.appendChild(altura);
     cardBack.appendChild(peso);
     cardBack.appendChild(especie);
+    cardBack.appendChild(habitad);
 
-    cardContainer.appendChild(card);
-    cardContainer.appendChild(cardBack);
+    return cardBack;
+}
+
+function crearPokemon(pokemon, imagen, info) {
+
+    const flipCard = document.createElement("div");
+    flipCard.classList.add("flip-card");
+
+    const cardContainer = document.createElement("div");
+    cardContainer.classList.add("card-container");
+
+    cardContainer.appendChild(crearCard(pokemon, imagen));
+    cardContainer.appendChild(crearCardBack(pokemon, info));
+
+    flipCard.appendChild(cardContainer);
+    
     pokemonContainer.appendChild(flipCard);
 }
 
-function removeChildNodes(parent) {
+function eliminarCartas(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
     }
 }
+
+//#endregion
+
+//#region Funciones buscar API
+
+async function buscarInfo(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    const info = await res.json();
+
+    return info;
+}
+
+async function buscarPokemon(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
+    const data = await res.json();
+
+    return data;
+}
+
+async function buscarPokemones(inicio, final) {
+    const listaPokemon = [];
+    const listaInfo = [];
+    const idImagen = [];
+    progressValue = 0;
+    progressEndValue = final - inicio + 1;
+
+    for (let i = inicio; i <= final; i++) {
+        var pokemon = await buscarPokemon(i);
+        var info = await buscarInfo(pokemon.species.name);
+
+        listaPokemon.push(pokemon);
+        listaInfo.push(info);
+        idImagen.push(i);
+
+        progressValue++;
+        progressContainer.textContent = `Pokémon encontrados: ${progressValue} de ${progressEndValue}`;
+    }
+
+    if (inicioEspecial > 0) {
+        progressValue = 0;
+
+        for (let i = inicioEspecial; i <= finalEspecial; i++) {
+            var pokemon = await buscarPokemon(i);
+            var info = await buscarInfo(pokemon.species.name);
+    
+            listaPokemon.push(pokemon);
+            listaInfo.push(info);
+            idImagen.push(i);
+        
+            progressValue++;
+            progressContainer.textContent = `Pokémon especiales encontrados: ${progressValue} de ${progressEndValue}`;
+        }
+    }
+
+    console.log(listaInfo);
+
+    waitContainer.style.display = `none`;
+
+    for (let i = 0; i <= listaPokemon.length - 1; i++) {
+        crearPokemon(listaPokemon[i], idImagen[i], listaInfo[i]);
+    }
+}
+
+//#endregion

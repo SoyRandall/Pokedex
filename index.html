@@ -24,19 +24,17 @@
         <div class="row col-12">
             <div class="row col-md-4 m-1">
                 <select id="buscarPor" class="select-region" aria-label="Default select example">
-                    <option class="opciones" selected disabled value="0">Región: </option>
-                    <option value="1">Todas</option>
-                    <option value="2">Kanto (1ª generación)</option>
-                    <option value="3">Johto (2ª generación)</option>
-                    <option value="4">Hoenn (3ª generación)</option>
-                    <option value="5">Sinnoh (4ª generación)</option>
-                    <option value="6">Teselia (5ª generación)</option>
-                    <option value="7">Kalos (6ª generación)</option>
-                    <option value="8">Alola (7ª generación)</option>
-                    <option value="9">Galar/Hisui (8ª generación)</option>
-                    <option value="10">Paldea (9ª generación)</option>
-                    <option value="12">Mega Evoluciones - Formas Especiales Kalos</option>
-                    <option value="13">Formas Especiales Alola</option>
+                    <option class="opciones" selected disabled value="0">Buscar Pokémon</option>
+                    <option value="1">📁 Kanto (1ª generación)</option>
+                    <option value="2">📁 Johto (2ª generación)</option>
+                    <option value="3">📁 Hoenn (3ª generación)</option>
+                    <option value="4">📁 Sinnoh (4ª generación)</option>
+                    <option value="5">📁 Teselia (5ª generación)</option>
+                    <option value="6">📁 Kalos (6ª generación)</option>
+                    <option value="7">📁 Alola (7ª generación)</option>
+                    <option value="8">📁 Galar/Hisui (8ª generación)</option>
+                    <option value="9">📁 Paldea (9ª generación)</option>
+                    <option hidden value="10">Más Pokémon</option>
                   </select>
             </div>
             <div class=" row col-md-2 m-1">
@@ -50,13 +48,12 @@
     </div>
     <div class="wait-container">
         <img class="wait-pikachu" src="./Imagenes/esperando.gif" alt="">
-        <div class="progress-container"></div>
+        <div class="progress-container">Por favor selecciona una lista de Pokémon.</div>
     </div>
     <div class="pokemon-container"></div>
     <script src="./JavaScript/principal.js"></script>
-    <a class="to-top-button" id="topButton" href="#"><i class="bi bi-arrow-up"></i></a>
+    <button class=" boton to-top-button" id="topButton" href="#"><i class="bi bi-arrow-up">UP</i></button>
     <script src="./JavaScript/toUpButton.js"></script>
-    <!-- <script src="./JavaScript/pruebas.js"></script> -->
 </body>
 
 </html>
