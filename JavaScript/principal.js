@@ -6,11 +6,17 @@ const limpiar = document.getElementById("limpiar");
 const bucarPor = document.getElementById("buscarPor");
 
 let progressContainer = document.querySelector(".progress-container");
+let waitContainer = document.querySelector(".wait-container");
+
 
 let inicio = 0;
 let final = 0;
+let progressValue = 0;
+let progressEndValue = 0;
 
 //#endregion
+
+//#region Eventos
 
 buscarPor.addEventListener("change", () => {
     var opcion = document.getElementById("buscarPor").value;
@@ -56,21 +62,36 @@ buscarPor.addEventListener("change", () => {
             inicio = 906;
             final = 1008;
             break;
+        case "12":
+            inicio = 10033;
+            final = 10090;
+            break;            
+        case "13":
+            inicio = 10091;
+            final = 10115;
+            break;
     }
 });
 
 buscar.addEventListener("click", () => {
     removeChildNodes(pokemonContainer);
-    progressContainer.style.display = `grid`;
+    waitContainer.style.display = `grid`;
     buscarPokemones(inicio, final);
 });
 
 limpiar.addEventListener("click", () => {
+    waitContainer.style.display = `none`;
     document.getElementById("buscarPor").value = "0";
     removeChildNodes(pokemonContainer);
     inicio = 0;
     final = 0;
+    progressValue = 0;
+    progressEndValue = 0;
 });
+
+//#endregion
+
+//#region Funciones buscar API
 
 async function buscarInfo(id) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
@@ -113,33 +134,42 @@ async function buscarPokemones(inicio, final) {
     const listaDatos = [];
     const listaInfo = [];
     let contadorImagen = inicio;
-    let progressValue = 0;
-    let progressEndValue = final - inicio + 1;
+    progressValue = 0;
+    progressEndValue = final - inicio + 1;
 
     for (let i = inicio; i <= final; i++) {
         var pokemon = await buscarPokemon(i);
-        var datos = await buscarDatos(i);
-        var info = await buscarInfo(i);
+
+        if (inicio < 10000) {
+            var datos = await buscarDatos(i);
+            var info = await buscarInfo(i);
+        }
+        else {
+            var datos = await buscarDatos(pokemon.species.name);
+            var info = await buscarInfo(pokemon.species.name);
+        }
 
         listaPokemon.push(pokemon);
         listaDatos.push(datos);
         listaInfo.push(info);
 
-        // console.log(pokemon);
+        // console.log(listaPokemon);
         // console.log(datos);
-        // console.log(info);
+        console.log(info);
 
         progressValue++;
-        progressContainer.textContent = `Pokémons encontrados: ${progressValue} de ${progressEndValue} 👀`;
+        progressContainer.textContent = `Pokémon encontrados: ${progressValue} de ${progressEndValue}`;
     }
 
-    progressContainer.style.display = `none`;
+    waitContainer.style.display = `none`;
 
     for (let i = 0; i <= listaPokemon.length - 1; i++) {
         crearPokemon(listaPokemon[i], listaDatos[i], contadorImagen, listaInfo[i]);
         contadorImagen++;
     }
 }
+
+//#endregion
 
 function crearPokemon(pokemon, entradaPokedex, id, info) {
 

@@ -22,22 +22,21 @@
 <body>
     <div class="select-container">
         <div class="row col-12">
-            <!-- <div class="row col-md-2">
-                <img src="./Imagenes/pokemon-logo.png" alt="">
-            </div> -->
-            <div class="row col-md-3 m-1">
+            <div class="row col-md-4 m-1">
                 <select id="buscarPor" class="select-region" aria-label="Default select example">
                     <option class="opciones" selected disabled value="0">Región: </option>
                     <option value="1">Todas</option>
-                    <option value="2">Kanto (1ª gen.)</option>
-                    <option value="3">Johto (2ª gen.)</option>
-                    <option value="4">Hoenn (3ª gen.)</option>
-                    <option value="5">Sinnoh (4ª gen.)</option>
-                    <option value="6">Teselia (5ª gen.)</option>
-                    <option value="7">Kalos (6ª gen.)</option>
-                    <option value="8">Alola (7ª gen.)</option>
-                    <option value="9">Galar/Hisui (8ª gen.)</option>
-                    <option value="10">Paldea (9ª gen.)</option>
+                    <option value="2">Kanto (1ª generación)</option>
+                    <option value="3">Johto (2ª generación)</option>
+                    <option value="4">Hoenn (3ª generación)</option>
+                    <option value="5">Sinnoh (4ª generación)</option>
+                    <option value="6">Teselia (5ª generación)</option>
+                    <option value="7">Kalos (6ª generación)</option>
+                    <option value="8">Alola (7ª generación)</option>
+                    <option value="9">Galar/Hisui (8ª generación)</option>
+                    <option value="10">Paldea (9ª generación)</option>
+                    <option value="12">Mega Evoluciones - Formas Especiales Kalos</option>
+                    <option value="13">Formas Especiales Alola</option>
                   </select>
             </div>
             <div class=" row col-md-2 m-1">
@@ -49,11 +48,15 @@
             </div>
         </div>
     </div>
-    <div class="progress-container"></div>
+    <div class="wait-container">
+        <img class="wait-pikachu" src="./Imagenes/esperando.gif" alt="">
+        <div class="progress-container"></div>
+    </div>
     <div class="pokemon-container"></div>
     <script src="./JavaScript/principal.js"></script>
     <a class="to-top-button" id="topButton" href="#"><i class="bi bi-arrow-up"></i></a>
     <script src="./JavaScript/toUpButton.js"></script>
+    <!-- <script src="./JavaScript/pruebas.js"></script> -->
 </body>
 
 </html>
