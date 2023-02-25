@@ -4,10 +4,10 @@ const pokemonContainer = document.querySelector(".pokemon-container");
 const buscar = document.getElementById("buscar");
 const limpiar = document.getElementById("limpiar");
 const bucarPor = document.getElementById("buscarPor");
+const bucarPorTipo = document.getElementById("buscarPorTipo");
 
 let progressContainer = document.querySelector(".progress-container");
 let waitContainer = document.querySelector(".wait-container");
-
 
 let inicio = 0;
 let final = 0;
@@ -15,10 +15,15 @@ let inicioEspecial = 0;
 let finalEspecial = 0;
 let progressValue = 0;
 let progressEndValue = 0;
+let tipo = "todos";
 
 //#endregion
 
 //#region Eventos
+
+buscarPorTipo.addEventListener("change", () => {
+    tipo = document.getElementById("buscarPorTipo").value;
+});
 
 buscarPor.addEventListener("change", () => {
 
@@ -27,6 +32,12 @@ buscarPor.addEventListener("change", () => {
     finalEspecial = 0;
 
     switch (opcion) {
+        case "0":
+            inicio = 1;
+            final = 1008;
+            inicioEspecial = 10001;
+            finalEspecial = 10252;
+            break;
         case "1":
             inicio = 1;
             final = 151;
@@ -77,10 +88,6 @@ buscarPor.addEventListener("change", () => {
             inicioEspecial = 10250;
             finalEspecial = 10252;
             break;
-        case "10":
-            inicio = 10252;
-            final = 10252;
-            break;
     }
 });
 
@@ -88,7 +95,7 @@ buscar.addEventListener("click", () => {
 
     var opcion = document.getElementById("buscarPor").value;
 
-    if (opcion === "0") {
+    if (opcion === "-1") {
         progressContainer.textContent = "Por favor selecciona una lista de Pokémon.";
         waitContainer.style.display = `grid`;
     }
@@ -101,7 +108,8 @@ buscar.addEventListener("click", () => {
 
 limpiar.addEventListener("click", () => {
     waitContainer.style.display = `none`;
-    document.getElementById("buscarPor").value = "0";
+    document.getElementById("buscarPor").value = "-1";
+    document.getElementById("buscarPorTipo").value = "-1";
     eliminarCartas(pokemonContainer);
     inicio = 0;
     final = 0;
@@ -109,6 +117,7 @@ limpiar.addEventListener("click", () => {
     finalEspecial = 0;
     progressValue = 0;
     progressEndValue = 0;
+    tipo = "todos";
 });
 
 //#endregion
@@ -299,10 +308,10 @@ function crearCardBack(pokemon, info) {
     habitad.classList.add("datos");
 
     try {
-        habitad.textContent = "📌 Hábitad: " + info.habitat.name;
+        habitad.textContent = "📌 Hábitat: " + info.habitat.name;
     }
     catch {
-        habitad.textContent = "📌 Hábitad: Sin registro...";
+        habitad.textContent = "📌 Hábitat: Sin registro...";
     }
 
     cardBack.appendChild(cbTitle);
@@ -366,9 +375,20 @@ async function buscarPokemones(inicio, final) {
         var pokemon = await buscarPokemon(i);
         var info = await buscarInfo(pokemon.species.name);
 
-        listaPokemon.push(pokemon);
-        listaInfo.push(info);
-        idImagen.push(i);
+        if (tipo === "todos") {
+            listaPokemon.push(pokemon);
+            listaInfo.push(info);
+            idImagen.push(i);
+        }
+        else {
+            pokemon.types.forEach(function (type) {
+                if (type.type.name === tipo) {
+                    listaPokemon.push(pokemon);
+                    listaInfo.push(info);
+                    idImagen.push(i);
+                }
+            });
+        }
 
         progressValue++;
         progressContainer.textContent = `Pokémon encontrados: ${progressValue} de ${progressEndValue}`;
@@ -381,9 +401,20 @@ async function buscarPokemones(inicio, final) {
             var pokemon = await buscarPokemon(i);
             var info = await buscarInfo(pokemon.species.name);
     
-            listaPokemon.push(pokemon);
-            listaInfo.push(info);
-            idImagen.push(i);
+            if (tipo === "todos") {
+                listaPokemon.push(pokemon);
+                listaInfo.push(info);
+                idImagen.push(i);
+            }
+            else {
+                pokemon.types.forEach(function (type) {
+                    if (type.type.name === tipo) {
+                        listaPokemon.push(pokemon);
+                        listaInfo.push(info);
+                        idImagen.push(i);
+                    }
+                });
+            }
         
             progressValue++;
             progressContainer.textContent = `Pokémon especiales encontrados: ${progressValue} de ${progressEndValue}`;
