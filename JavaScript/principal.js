@@ -5,6 +5,7 @@ const buscar = document.getElementById("buscar");
 const limpiar = document.getElementById("limpiar");
 const bucarPor = document.getElementById("buscarPor");
 const bucarPorTipo = document.getElementById("buscarPorTipo");
+const mybutton = document.getElementById("topButton");
 
 let progressContainer = document.querySelector(".progress-container");
 let waitContainer = document.querySelector(".wait-container");
@@ -16,6 +17,7 @@ let finalEspecial = 0;
 let progressValue = 0;
 let progressEndValue = 0;
 let tipo = "todos";
+let habitat = "";
 
 //#endregion
 
@@ -88,6 +90,12 @@ buscarPor.addEventListener("change", () => {
             inicioEspecial = 10250;
             finalEspecial = 10252;
             break;
+        case "10":
+            inicio = 1;
+            final = 1;
+            inicioEspecial = 10253;
+            finalEspecial = 10271;
+            break;
     }
 });
 
@@ -120,9 +128,19 @@ limpiar.addEventListener("click", () => {
     tipo = "todos";
 });
 
+window.onscroll = function () { scrollFunction() };
+
 //#endregion
 
 //#region Funciones de apoyo
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        mybutton.style.display = "block";
+    } else {
+        mybutton.style.display = "none";
+    }
+}
 
 function desPokedex(info) {
     var entradaPokedex = [];
@@ -238,6 +256,40 @@ function agregarTipos(pokemon) {
     return typeContainer;
 }
 
+function agregarHabitat(info) {
+    switch (info.habitat.name) {
+        case "grassland":
+            habitat = "Pradera";
+            break;
+        case "forest":
+            habitat = "Bosque";
+            break;
+        case "waters-edge":
+            habitat = "Borde del agua";
+            break;
+        case "sea":
+            habitat = "Mar";
+            break;
+        case "cave":
+            habitat = "Cueva";
+            break;
+        case "mountain":
+            habitat = "Montaña";
+            break;
+        case "rough-terrain":
+            habitat = "Terreno difícil";
+            break;
+        case "urban":
+            habitat = "Urbano";
+            break;
+        case "Rare":
+            habitat = "Raro";
+            break;
+    }
+
+    return habitat;
+}
+
 function crearCard(pokemon, imagen) {
     const card = document.createElement("div");
     card.classList.add("pokemon-block");
@@ -308,7 +360,7 @@ function crearCardBack(pokemon, info) {
     habitad.classList.add("datos");
 
     try {
-        habitad.textContent = "📌 Hábitat: " + info.habitat.name;
+        habitad.textContent = "📌 Hábitat: " + agregarHabitat(info);
     }
     catch {
         habitad.textContent = "📌 Hábitat: Sin registro...";
@@ -336,7 +388,7 @@ function crearPokemon(pokemon, imagen, info) {
     cardContainer.appendChild(crearCardBack(pokemon, info));
 
     flipCard.appendChild(cardContainer);
-    
+
     pokemonContainer.appendChild(flipCard);
 }
 
@@ -390,8 +442,10 @@ async function buscarPokemones(inicio, final) {
             });
         }
 
+        console.log(pokemon);
+
         progressValue++;
-        progressContainer.textContent = `Pokémon encontrados: ${progressValue} de ${progressEndValue}`;
+        progressContainer.textContent = `Pokémon analizados: ${progressValue} de ${progressEndValue}`;
     }
 
     if (inicioEspecial > 0) {
@@ -400,7 +454,7 @@ async function buscarPokemones(inicio, final) {
         for (let i = inicioEspecial; i <= finalEspecial; i++) {
             var pokemon = await buscarPokemon(i);
             var info = await buscarInfo(pokemon.species.name);
-    
+
             if (tipo === "todos") {
                 listaPokemon.push(pokemon);
                 listaInfo.push(info);
@@ -415,9 +469,9 @@ async function buscarPokemones(inicio, final) {
                     }
                 });
             }
-        
+
             progressValue++;
-            progressContainer.textContent = `Pokémon especiales encontrados: ${progressValue} de ${progressEndValue}`;
+            progressContainer.textContent = `Pokémon especiales analizados: ${progressValue} de ${progressEndValue}`;
         }
     }
 
