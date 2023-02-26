@@ -290,7 +290,7 @@ function agregarHabitat(info) {
     return habitat;
 }
 
-function crearCard(pokemon, imagen) {
+function crearCard(pokemon) {
     const card = document.createElement("div");
     card.classList.add("pokemon-block");
 
@@ -300,7 +300,7 @@ function crearCard(pokemon, imagen) {
     const sprite = document.createElement("img");
     sprite.classList.add("img-pokemon");
     // sprite.src = pokemon.sprites.other.official-artwork.front_default;
-    sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${imagen}.png`;
+    sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
     spriteContainer.appendChild(sprite);
 
@@ -376,7 +376,7 @@ function crearCardBack(pokemon, info) {
     return cardBack;
 }
 
-function crearPokemon(pokemon, imagen, info) {
+function crearPokemon(pokemon, info) {
 
     const flipCard = document.createElement("div");
     flipCard.classList.add("flip-card");
@@ -384,7 +384,7 @@ function crearPokemon(pokemon, imagen, info) {
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("card-container");
 
-    cardContainer.appendChild(crearCard(pokemon, imagen));
+    cardContainer.appendChild(crearCard(pokemon));
     cardContainer.appendChild(crearCardBack(pokemon, info));
 
     flipCard.appendChild(cardContainer);
@@ -419,7 +419,6 @@ async function buscarPokemon(id) {
 async function buscarPokemones(inicio, final) {
     const listaPokemon = [];
     const listaInfo = [];
-    const idImagen = [];
     progressValue = 0;
     progressEndValue = final - inicio + 1;
 
@@ -430,14 +429,12 @@ async function buscarPokemones(inicio, final) {
         if (tipo === "todos") {
             listaPokemon.push(pokemon);
             listaInfo.push(info);
-            idImagen.push(i);
         }
         else {
             pokemon.types.forEach(function (type) {
                 if (type.type.name === tipo) {
                     listaPokemon.push(pokemon);
                     listaInfo.push(info);
-                    idImagen.push(i);
                 }
             });
         }
@@ -458,14 +455,12 @@ async function buscarPokemones(inicio, final) {
             if (tipo === "todos") {
                 listaPokemon.push(pokemon);
                 listaInfo.push(info);
-                idImagen.push(i);
             }
             else {
                 pokemon.types.forEach(function (type) {
                     if (type.type.name === tipo) {
                         listaPokemon.push(pokemon);
                         listaInfo.push(info);
-                        idImagen.push(i);
                     }
                 });
             }
@@ -480,7 +475,7 @@ async function buscarPokemones(inicio, final) {
     waitContainer.style.display = `none`;
 
     for (let i = 0; i <= listaPokemon.length - 1; i++) {
-        crearPokemon(listaPokemon[i], idImagen[i], listaInfo[i]);
+        crearPokemon(listaPokemon[i], listaInfo[i]);
     }
 }
 
