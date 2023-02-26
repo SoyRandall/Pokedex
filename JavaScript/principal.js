@@ -6,9 +6,8 @@ const limpiar = document.getElementById("limpiar");
 const bucarPor = document.getElementById("buscarPor");
 const bucarPorTipo = document.getElementById("buscarPorTipo");
 const mybutton = document.getElementById("topButton");
-
-let progressContainer = document.querySelector(".progress-container");
-let waitContainer = document.querySelector(".wait-container");
+const progressContainer = document.querySelector(".progress-container");
+const waitContainer = document.querySelector(".wait-container");
 
 let inicio = 0;
 let final = 0;
@@ -439,7 +438,7 @@ async function buscarPokemones(inicio, final) {
             });
         }
 
-        console.log(pokemon);
+        // console.log(pokemon);
 
         progressValue++;
         progressContainer.textContent = `Pokémon analizados: ${progressValue} de ${progressEndValue}`;
@@ -470,7 +469,7 @@ async function buscarPokemones(inicio, final) {
         }
     }
 
-    console.log(listaInfo);
+    // console.log(listaInfo);
 
     waitContainer.style.display = `none`;
 
