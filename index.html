@@ -8,75 +8,82 @@
     <link rel="icon" href="./Imagenes/pokedex.ico">
 
     <!-- Bootstrap CSS y JavaScript -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="./CSS/estilos.css">
 </head>
 
 <body>
     <div class="select-container">
-        <div class="row col-12">
-            <div class="row col-md-3 m-1">
-                <select id="buscarPor" class="select-region" aria-label="Default select example">
-                    <option selected disabled value="-1">Región</option>
-                    <option value="0">🌎 Todas</option>
-                    <option value="1">📁 Kanto (1ª generación)</option>
-                    <option value="2">📁 Johto (2ª generación)</option>
-                    <option value="3">📁 Hoenn (3ª generación)</option>
-                    <option value="4">📁 Sinnoh (4ª generación)</option>
-                    <option value="5">📁 Teselia (5ª generación)</option>
-                    <option value="6">📁 Kalos (6ª generación)</option>
-                    <option value="7">📁 Alola (7ª generación)</option>
-                    <option value="8">📁 Galar/Hisui (8ª generación)</option>
-                    <option value="9">📁 Paldea (9ª generación)</option>
-                    <option hidden value="10">📁 Otros</option>
-                  </select>
+        <div class="row col-12" style="margin-left: auto;">
+            <div class="row col-md-6">
+                <div class="form-group">
+                    <input class="form-control form-control" type="text" placeholder="ID o nombre del Pokémon"
+                        name="txtDato" id="txtDato">
+                </div>
             </div>
-            <div class="row col-md-2 m-1">
-                <select id="buscarPorTipo" class="select-region" aria-label="Default select example">
-                    <option selected disabled value="-1">Tipos</option>
-                    <option value="todos">✨ Todos</option>
-                    <option value="steel">📌 Acero</option>
-                    <option value="water">📌 Agua</option>
-                    <option value="bug">📌 Bicho</option>
-                    <option value="dragon">📌 Dragón</option>
-                    <option value="electric">📌 Eléctrico</option>
-                    <option value="ghost">📌 Fantasma</option>
-                    <option value="fire">📌 Fuego</option>
-                    <option value="fairy">📌 Hada</option>
-                    <option value="ice">📌 Hielo</option>
-                    <option value="fighting">📌 Lucha</option>
-                    <option value="normal">📌 Normal</option>
-                    <option value="grass">📌 Planta</option>
-                    <option value="psychic">📌 Psíquico</option>
-                    <option value="rock">📌 Roca</option>
-                    <option value="dark">📌 Siniestro</option>
-                    <option value="ground">📌 Tierra</option>
-                    <option value="poison">📌 Veneno</option>
-                    <option value="flying">📌 Volador</option>
-                  </select>
-            </div>
-            <div class=" row col-md-2 m-1">
-                <button type="button" class="boton btn-buscar" id="buscar">
+            <div class="row col-md-4" style="margin-right: 1px;">
+                <button type="button" class="btn btn-primary" id="buscar">
                     <i class="bi bi-search"></i> Buscar
                 </button>
             </div>
-            <div class=" row col-md-2 m-1">
-                <button type="button" class="boton btn-limpiar" id="limpiar">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Limpiar
+            <div class="row col-md-2">
+                <button type="button" class="btn btn-info" id="buscar" data-bs-toggle="modal" data-bs-target="#restablecerClaveModal">
+                    <i class="bi bi-info-circle"></i>
                 </button>
             </div>
         </div>
     </div>
     <div class="wait-container">
         <img class="wait-pikachu" src="./Imagenes/esperando.gif" alt="">
-        <div class="progress-container">Por favor selecciona una lista de Pokémon.</div>
+        <div class="progress-container">Buscando Pokémon por favor espera.</div>
     </div>
     <div class="pokemon-container"></div>
-    <a class="to-top-button" id="topButton" href="#"><i class="bi bi-arrow-up"></i></a>
+    <div class="select-container">
+        <div class="row col-12" style="margin: auto;">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary" name="btnAnterior" id="btnAnterior" disabled>
+                    <i class="bi bi-arrow-left"></i> Anterior
+                </button>
+                <button type="button" class="btn btn-secondary" name="btnSiguiente" id="btnSiguiente" disabled>
+                    Siguiente <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     <script src="./JavaScript/principal.js"></script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="restablecerClaveModal"  tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📘 índice de Busqueda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="contenedorModal" style="text-align: left; padding: 10px;">
+                        <li>Primera Generación <strong>Kanto</strong>: desde <strong>1</strong> hasta el <strong>151</strong></li>
+                        <li>Segunda Generación <strong>Johto</strong>: desde <strong>152</strong> hasta el <strong>251</strong></li>
+                        <li>Tercera Generación <strong>Hoenn</strong>: desde <strong>252</strong> hasta el <strong>386</strong></li>
+                        <li>Cuarta Generación <strong>Sinnoh</strong>: desde <strong>387</strong> hasta el <strong>494</strong></li>
+                        <li>Quinta Generación <strong>Teselia</strong>: desde <strong>495</strong> hasta el <strong>649</strong></li>
+                        <li>Sexta Generación <strong>Kalos</strong>: desde <strong>650</strong> hasta el <strong>721</strong></li>
+                        <li>Séptima Generación <strong>Alola</strong>: desde <strong>722</strong> hasta el <strong>809</strong></li>
+                        <li>Octava Generación <strong>Galar</strong>: desde <strong>810</strong> hasta el <strong>905</strong></li>
+                        <li>Novena Generación <strong>Paldea</strong>: desde <strong>906</strong> hasta el <strong>1010</strong></li>
+                        <li>Formas especiales: desde <strong>10001</strong> hasta el <strong>10252</strong></li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

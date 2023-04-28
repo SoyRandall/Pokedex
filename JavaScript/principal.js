@@ -2,129 +2,56 @@
 
 const pokemonContainer = document.querySelector(".pokemon-container");
 const buscar = document.getElementById("buscar");
-const limpiar = document.getElementById("limpiar");
-const bucarPor = document.getElementById("buscarPor");
-const bucarPorTipo = document.getElementById("buscarPorTipo");
+const dato = document.getElementById("txtDato");
 const mybutton = document.getElementById("topButton");
 const progressContainer = document.querySelector(".progress-container");
 const waitContainer = document.querySelector(".wait-container");
+const anterior = document.getElementById("btnAnterior");
+const siguiente = document.getElementById("btnSiguiente");
 
-let inicio = 0;
-let final = 0;
-let inicioEspecial = 0;
-let finalEspecial = 0;
-let progressValue = 0;
-let progressEndValue = 0;
-let tipo = "todos";
 let habitat = "";
-
-//#endregion
 
 //#region Eventos
 
-buscarPorTipo.addEventListener("change", () => {
-    tipo = document.getElementById("buscarPorTipo").value;
-});
-
-buscarPor.addEventListener("change", () => {
-
-    var opcion = document.getElementById("buscarPor").value;
-    inicioEspecial = 0;
-    finalEspecial = 0;
-
-    switch (opcion) {
-        case "0":
-            inicio = 1;
-            final = 1008;
-            inicioEspecial = 10001;
-            finalEspecial = 10252;
-            break;
-        case "1":
-            inicio = 1;
-            final = 151;
-            break;
-        case "2":
-            inicio = 152;
-            final = 251;
-            break;
-        case "3":
-            inicio = 252;
-            final = 386;
-            inicioEspecial = 10001;
-            finalEspecial = 10003;
-            break;
-        case "4":
-            inicio = 387;
-            final = 494;
-            inicioEspecial = 10004;
-            finalEspecial = 10012;
-            break;
-        case "5":
-            inicio = 495;
-            final = 649;
-            inicioEspecial = 10005;
-            finalEspecial = 10024;
-            break;
-        case "6":
-            inicio = 650;
-            final = 721;
-            inicioEspecial = 10025;
-            finalEspecial = 10090;
-            break;
-        case "7":
-            inicio = 722;
-            final = 809;
-            inicioEspecial = 10091;
-            finalEspecial = 10157;
-            break;
-        case "8":
-            inicio = 810;
-            final = 905;
-            inicioEspecial = 10160;
-            finalEspecial = 10249;
-            break;
-        case "9":
-            inicio = 906;
-            final = 1008;
-            inicioEspecial = 10250;
-            finalEspecial = 10252;
-            break;
-        case "10":
-            inicio = 1;
-            final = 1;
-            inicioEspecial = 10253;
-            finalEspecial = 10271;
-            break;
-    }
-});
-
 buscar.addEventListener("click", () => {
 
-    var opcion = document.getElementById("buscarPor").value;
-
-    if (opcion === "-1") {
-        progressContainer.textContent = "Por favor selecciona una lista de Pokémon.";
+    if (dato.value === "") {
+        progressContainer.textContent = "Por favor ingresa un id o nombre de Pokémon.";
         waitContainer.style.display = `grid`;
     }
     else {
         eliminarCartas(pokemonContainer);
         waitContainer.style.display = `grid`;
-        buscarPokemones(inicio, final);
+        buscarPokemones(dato.value);
     }
 });
 
-limpiar.addEventListener("click", () => {
-    waitContainer.style.display = `none`;
-    document.getElementById("buscarPor").value = "-1";
-    document.getElementById("buscarPorTipo").value = "-1";
+anterior.addEventListener("click", () => {
+
+    if (idActual === 10001) {
+        idActual = 1011;
+    }
+
+    idActual--;
     eliminarCartas(pokemonContainer);
-    inicio = 0;
-    final = 0;
-    inicioEspecial = 0;
-    finalEspecial = 0;
-    progressValue = 0;
-    progressEndValue = 0;
-    tipo = "todos";
+    waitContainer.style.display = `grid`;
+    buscarPokemones(idActual);
+
+    dato.value = idActual;
+});
+
+siguiente.addEventListener("click", () => {
+
+    if (idActual === 1010) {
+        idActual = 10000;
+    }
+
+    idActual++;
+    eliminarCartas(pokemonContainer);
+    waitContainer.style.display = `grid`;
+    buscarPokemones(idActual);
+
+    dato.value = idActual;
 });
 
 window.onscroll = function () { scrollFunction() };
@@ -132,6 +59,26 @@ window.onscroll = function () { scrollFunction() };
 //#endregion
 
 //#region Funciones de apoyo
+
+function validarMinimo() {
+
+    anterior.disabled = false;
+    siguiente.disabled = false;
+
+    if (idActual === 1) {
+        anterior.disabled = true;
+    }
+    else {
+        anterior.disabled = false;
+    }
+
+    if (idActual === 10252) {
+        siguiente.disabled = true;
+    }
+    else {
+        siguiente.disabled = false;
+    }
+}
 
 function scrollFunction() {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
@@ -415,66 +362,28 @@ async function buscarPokemon(id) {
     return data;
 }
 
-async function buscarPokemones(inicio, final) {
-    const listaPokemon = [];
-    const listaInfo = [];
-    progressValue = 0;
-    progressEndValue = final - inicio + 1;
+async function buscarPokemones(dato) {
 
-    for (let i = inicio; i <= final; i++) {
-        var pokemon = await buscarPokemon(i);
+    try {
+        const listaPokemon = [];
+        const listaInfo = [];
+    
+        var pokemon = await buscarPokemon(dato);
         var info = await buscarInfo(pokemon.species.name);
+    
+        progressContainer.textContent = "Buscando Pokémon por favor espera";
+    
+        listaPokemon.push(pokemon);
+        listaInfo.push(info);
+    
+        waitContainer.style.display = `none`;
+        idActual = pokemon.id;
 
-        if (tipo === "todos") {
-            listaPokemon.push(pokemon);
-            listaInfo.push(info);
-        }
-        else {
-            pokemon.types.forEach(function (type) {
-                if (type.type.name === tipo) {
-                    listaPokemon.push(pokemon);
-                    listaInfo.push(info);
-                }
-            });
-        }
-
-        // console.log(pokemon);
-
-        progressValue++;
-        progressContainer.textContent = `Pokémon analizados: ${progressValue} de ${progressEndValue}`;
+        validarMinimo();
+        crearPokemon(pokemon, info);
     }
-
-    if (inicioEspecial > 0) {
-        progressValue = 0;
-
-        for (let i = inicioEspecial; i <= finalEspecial; i++) {
-            var pokemon = await buscarPokemon(i);
-            var info = await buscarInfo(pokemon.species.name);
-
-            if (tipo === "todos") {
-                listaPokemon.push(pokemon);
-                listaInfo.push(info);
-            }
-            else {
-                pokemon.types.forEach(function (type) {
-                    if (type.type.name === tipo) {
-                        listaPokemon.push(pokemon);
-                        listaInfo.push(info);
-                    }
-                });
-            }
-
-            progressValue++;
-            progressContainer.textContent = `Pokémon especiales analizados: ${progressValue} de ${progressEndValue}`;
-        }
-    }
-
-    // console.log(listaInfo);
-
-    waitContainer.style.display = `none`;
-
-    for (let i = 0; i <= listaPokemon.length - 1; i++) {
-        crearPokemon(listaPokemon[i], listaInfo[i]);
+    catch {
+        progressContainer.textContent = "No existe ese Pokémon :(";
     }
 }
 
