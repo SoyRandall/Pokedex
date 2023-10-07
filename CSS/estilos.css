@@ -57,10 +57,20 @@ a {
   width: 40%;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   margin-top: 20px;
   border-radius: 10px;
-  padding: 30px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 3px 15px rgb(54, 115, 161);
+}
+
+.index-container {
+  width: 98%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 20px;
   background-color: white;
   box-shadow: 0 3px 15px rgb(54, 115, 161);
 }
@@ -76,7 +86,6 @@ a {
   width: 40%;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 40px;
   margin-top: 20px;
 }
 
@@ -97,6 +106,18 @@ a {
 
 /* #region card */
 
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-15px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+
 .img-container {
   background-image: url("../Imagenes/blob.svg");
   background-repeat: no-repeat;
@@ -104,18 +125,19 @@ a {
 }
 
 .img-pokemon {
-  width: 450px;
-  height: 450px;
+  width: 350px;
+  height: 350px;
+  animation: float 5s ease-in-out infinite;
 }
 
 .number {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .name {
   text-transform: capitalize;
   font-weight: bold;
-  font-size: 28px;
+  font-size: 24px;
 }
 
 /* #endregion card */
@@ -148,7 +170,7 @@ a {
   border-radius: 32px;
   font-weight: bolder;
   color: white;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .typesSteel { background-color: rgb(96,162,185); }
@@ -207,26 +229,31 @@ a {
 .pokemon-block,
 .pokemon-block-back {
   border-radius: 10px;
-  padding: 30px;
+  padding: 20px;
   background-color: white;
   box-shadow: 0 3px 15px rgb(54, 115, 161);
 }
 
 .cbTitle {
-  padding: 30px;
   font-weight: bold;
-  font-size: 28px;
+  font-size: 24px;
+  margin-top: 15px;
+}
+
+.varieties {
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 15px;
 }
 
 .pokedex-entry {
   text-align: center;
-  font-size: 20px;
-  padding: 20px;
+  font-size: 18px;
 }
 
 .datos {
   text-align: left;
-  font-size: 20px;
+  font-size: 18px;
   margin-left: 20px;
 }
 

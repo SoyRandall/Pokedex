@@ -60,6 +60,43 @@ window.onscroll = function () { scrollFunction() };
 
 //#region Funciones de apoyo
 
+//#region Funciones buscar API
+
+async function buscarInfo(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    const info = await res.json();
+
+    return info;
+}
+
+async function buscarPokemon(id) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
+    const data = await res.json();
+
+    return data;
+}
+
+async function buscarPokemones(dato) {
+
+    try {
+        var pokemon = await buscarPokemon(dato);
+        var info = await buscarInfo(pokemon.species.name);
+    
+        progressContainer.textContent = "Buscando Pokémon por favor espera";
+        
+        waitContainer.style.display = `none`;
+        idActual = pokemon.id;
+
+        validarMinimo();
+        crearPokemon(pokemon, info);
+    }
+    catch {
+        progressContainer.textContent = "No existe ese Pokémon :(";
+    }
+}
+
+//#endregion
+
 function validarMinimo() {
 
     anterior.disabled = false;
@@ -236,6 +273,27 @@ function agregarHabitat(info) {
     return habitat;
 }
 
+function agregarVarieties(info) {
+    try {
+        const pixel = document.createElement("div");
+        pixel.classList.add("pixel-pokemon");
+        
+        info.varieties.forEach(async function (vari) {
+            const pixelImg = document.createElement("img");
+            pixelImg.classList.add("pixel-img");
+
+            var dato = await buscarPokemon(vari.pokemon.name);
+            pixelImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${dato.id}.png`;
+            pixel.appendChild(pixelImg);
+        });
+
+        return pixel;
+    }
+    catch (error) {
+        console.error('Se ha producido un error:', error.message);
+    }
+}
+
 function crearCard(pokemon) {
     const card = document.createElement("div");
     card.classList.add("pokemon-block");
@@ -247,6 +305,7 @@ function crearCard(pokemon) {
     sprite.classList.add("img-pokemon");
     // sprite.src = pokemon.sprites.other.official-artwork.front_default;
     sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+    // sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
 
     spriteContainer.appendChild(sprite);
 
@@ -270,9 +329,9 @@ function crearCardBack(pokemon, info) {
     const cardBack = document.createElement("div");
     cardBack.classList.add("pokemon-block-back");
 
-    const cbTitle = document.createElement("h5");
+    const cbTitle = document.createElement("p");
     cbTitle.classList.add("cbTitle");
-    cbTitle.textContent = "Información del Pokémon";
+    cbTitle.textContent = "Información de " + info.names[8].name;
 
     const pokedexEntry = document.createElement("p");
     pokedexEntry.classList.add("pokedex-entry");
@@ -312,12 +371,18 @@ function crearCardBack(pokemon, info) {
         habitad.textContent = "📌 Hábitat: Sin registro...";
     }
 
+    const varieties = document.createElement("p");
+    varieties.classList.add("varieties");
+    varieties.textContent = "Variantes";
+
     cardBack.appendChild(cbTitle);
     cardBack.appendChild(pokedexEntry);
     cardBack.appendChild(altura);
     cardBack.appendChild(peso);
     cardBack.appendChild(especie);
     cardBack.appendChild(habitad);
+    cardBack.appendChild(varieties);
+    cardBack.appendChild(agregarVarieties(info));
 
     return cardBack;
 }
@@ -341,49 +406,6 @@ function crearPokemon(pokemon, info) {
 function eliminarCartas(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
-    }
-}
-
-//#endregion
-
-//#region Funciones buscar API
-
-async function buscarInfo(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-    const info = await res.json();
-
-    return info;
-}
-
-async function buscarPokemon(id) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
-    const data = await res.json();
-
-    return data;
-}
-
-async function buscarPokemones(dato) {
-
-    try {
-        const listaPokemon = [];
-        const listaInfo = [];
-    
-        var pokemon = await buscarPokemon(dato);
-        var info = await buscarInfo(pokemon.species.name);
-    
-        progressContainer.textContent = "Buscando Pokémon por favor espera";
-    
-        listaPokemon.push(pokemon);
-        listaInfo.push(info);
-    
-        waitContainer.style.display = `none`;
-        idActual = pokemon.id;
-
-        validarMinimo();
-        crearPokemon(pokemon, info);
-    }
-    catch {
-        progressContainer.textContent = "No existe ese Pokémon :(";
     }
 }
 
