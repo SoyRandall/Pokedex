@@ -17,6 +17,15 @@ a {
   text-decoration: none;
 }
 
+th {
+  text-align: center;
+}
+
+td {
+  vertical-align: middle;
+  text-align: center;
+}
+
 /* #region Bloque de espera y progreso */
 
 .wait-pikachu {
@@ -54,9 +63,8 @@ a {
 /* #region Select de Busqueda */
 
 .select-container {
-  width: 40%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 20px;
+  margin-right: 20px;
   margin-bottom: 20px;
   margin-top: 20px;
   border-radius: 10px;
@@ -140,6 +148,12 @@ a {
   font-size: 24px;
 }
 
+.nameTabla {
+  text-transform: capitalize;
+  font-weight: normal;
+  font-size: 16px;
+}
+
 /* #endregion card */
 
 /* #region Pokemon Types */
@@ -166,11 +180,23 @@ a {
 .types {
   margin-top: 10px;
   margin-bottom: 20px;
-  padding: 4px;
+  padding: 10px;
   border-radius: 32px;
   font-weight: bolder;
   color: white;
-  font-size: 16px;
+  font-size: 20px;
+}
+
+.typesTable {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 32px;
+  font-weight: bolder;
+  color: white;
+  font-size: 14px;
+  width: 150px;
 }
 
 .typesSteel { background-color: rgb(96,162,185); }
@@ -236,25 +262,24 @@ a {
 
 .cbTitle {
   font-weight: bold;
-  font-size: 24px;
-  margin-top: 15px;
-}
-
-.varieties {
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 15px;
+  font-size: 26px;
+  margin-top: 20px;
 }
 
 .pokedex-entry {
+  padding: 20px;
   text-align: center;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .datos {
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   margin-left: 20px;
+}
+
+.btnVer {
+  padding: 14px;
 }
 
 /* #endregion */

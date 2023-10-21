@@ -2,14 +2,39 @@
 
 const pokemonContainer = document.querySelector(".pokemon-container");
 const buscar = document.getElementById("buscar");
+const buscarTabla = document.getElementById("buscarTabla");
 const dato = document.getElementById("txtDato");
 const mybutton = document.getElementById("topButton");
 const progressContainer = document.querySelector(".progress-container");
 const waitContainer = document.querySelector(".wait-container");
 const anterior = document.getElementById("btnAnterior");
 const siguiente = document.getElementById("btnSiguiente");
+const selectGeneraciones = document.getElementById("selectGeneraciones");
+const tabla = document.getElementById("table");
+const verCarta = document.getElementsByClassName("btnVer");
 
 let habitat = "";
+
+//#region Load
+
+$(document).ready(function () {
+
+    $(document).on("click", ".btnVer", function () {
+
+        var fila = $(this).closest("tr");
+        Id = fila.find('td:eq(0)').text();
+        dato.value = Id;
+
+        eliminarCartas(pokemonContainer);
+        waitContainer.style.display = `grid`;
+        buscarPokemones(Id);
+
+        $("#mdlIndiceBusqueda").modal("hide");
+    });
+
+});
+
+//#endregion
 
 //#region Eventos
 
@@ -54,13 +79,94 @@ siguiente.addEventListener("click", () => {
     dato.value = idActual;
 });
 
-window.onscroll = function () { scrollFunction() };
+buscarTabla.addEventListener("click", () => {
+
+    const tbody = tabla.getElementsByTagName("tbody")[0];
+
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    buscarPokemonGeneracion(selectGeneraciones.value);
+});
 
 //#endregion
 
 //#region Funciones de apoyo
 
 //#region Funciones buscar API
+
+async function buscarPokemonGeneracion(generacionId) {
+    try {
+
+        var inicio = 0
+        var final = 0
+        var inicioEspecial = 0
+        var finalEspecial = 0
+        var tipo2 = ""
+
+        //#region Validar Generacion
+        switch (generacionId) {
+            case "1":
+                inicio = 1;
+                final = 151;
+
+                break;
+
+            case "2":
+                inicio = 152;
+                final = 251;
+
+                break;
+
+            case "3":
+                inicio = 252;
+                final = 386;
+                inicioEspecial = 10001
+                finalEspecial = 10003
+    
+                break;
+        }
+        //#endregion
+
+        //#region Buscar Normales
+        for (i = inicio; i < final + 1; i++) {
+            const pokemon = await buscarPokemon(i);
+
+            try {
+                tipo2 = pokemon.types[1].type.name;
+            }
+            catch {
+                tipo2 = "No tiene";
+            }
+
+            crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+        }
+        //#endregion
+
+        //#region Buscar Especiales
+
+        if (inicioEspecial > 0) {
+            for (i = inicioEspecial; i < finalEspecial + 1; i++) {
+                const pokemon = await buscarPokemon(i);
+    
+                try {
+                    tipo2 = pokemon.types[1].type.name;
+                }
+                catch {
+                    tipo2 = "No tiene";
+                }
+    
+                crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+            }
+        }
+
+        //#endregion
+
+    } catch (error) {
+        console.error('Error al buscar Pokémon por generación:', error);
+    }
+}
 
 async function buscarInfo(id) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
@@ -81,9 +187,9 @@ async function buscarPokemones(dato) {
     try {
         var pokemon = await buscarPokemon(dato);
         var info = await buscarInfo(pokemon.species.name);
-    
+
         progressContainer.textContent = "Buscando Pokémon por favor espera";
-        
+
         waitContainer.style.display = `none`;
         idActual = pokemon.id;
 
@@ -96,6 +202,52 @@ async function buscarPokemones(dato) {
 }
 
 //#endregion
+
+function crearFilas(pId, pSprite, pNombre, pTipo1, pTipo2) {
+    // Obtén el cuerpo de la tabla (tbody)
+    const tbody = tabla.getElementsByTagName("tbody")[0];
+
+    // Crea una nueva fila (tr)
+    const fila = document.createElement("tr");
+
+    // Crea celdas (td) para los datos
+    const celdaId = document.createElement("td");
+    celdaId.textContent = pId;
+
+    const celdaNombre = document.createElement("td");
+    celdaNombre.classList.add("nameTabla");
+    celdaNombre.textContent = pNombre;
+
+    const celdaSprite = document.createElement("td");
+    celdaSprite.innerHTML = "<td><img class='pixelImg' src='" + pSprite + "'></td>";
+
+    const celdaTipo1 = document.createElement("td");
+    celdaTipo1.appendChild(agregarTiposTabla(pTipo1));
+
+    const celdaTipo2 = document.createElement("td");
+
+    if (pTipo2 === "No tiene") {
+        celdaTipo2.textContent = "";
+    }
+    else {
+        celdaTipo2.appendChild(agregarTiposTabla(pTipo2));
+    }
+
+    const celdaBoton = document.createElement("td");
+    celdaBoton.innerHTML = "<td><button type='button' class='btn btn-primary btnVer' id='verCarta'>" +
+                                    "<i class='bi bi-search'></i>" +
+                                "</button></td>";
+
+    fila.appendChild(celdaId);
+    fila.appendChild(celdaSprite);
+    fila.appendChild(celdaNombre);
+    fila.appendChild(celdaTipo1);
+    fila.appendChild(celdaTipo2);
+    fila.appendChild(celdaBoton);
+
+    tbody.appendChild(fila);
+
+}
 
 function validarMinimo() {
 
@@ -114,14 +266,6 @@ function validarMinimo() {
     }
     else {
         siguiente.disabled = false;
-    }
-}
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        mybutton.style.display = "block";
-    } else {
-        mybutton.style.display = "none";
     }
 }
 
@@ -239,6 +383,86 @@ function agregarTipos(pokemon) {
     return typeContainer;
 }
 
+function agregarTiposTabla(pTipo) {
+    const type = document.createElement("label");
+    switch (pTipo) {
+        case "steel":
+            type.classList.add("typesTable", "typesSteel");
+            type.textContent = "Acero";
+            break;
+        case "water":
+            type.classList.add("typesTable", "typesWater");
+            type.textContent = "Agua";
+            break;
+        case "bug":
+            type.classList.add("typesTable", "typesBug");
+            type.textContent = "Bicho";
+            break;
+        case "dragon":
+            type.classList.add("typesTable", "typesDragon");
+            type.textContent = "Dragón";
+            break;
+        case "electric":
+            type.classList.add("typesTable", "typesElectric");
+            type.textContent = "Eléctrico";
+            break;
+        case "ghost":
+            type.classList.add("typesTable", "typesGhost");
+            type.textContent = "Fantasma";
+            break;
+        case "fire":
+            type.classList.add("typesTable", "typesFire");
+            type.textContent = "Fuego";
+            break;
+        case "fairy":
+            type.classList.add("typesTable", "typesFairy");
+            type.textContent = "Hada";
+            break;
+        case "ice":
+            type.classList.add("typesTable", "typesIce");
+            type.textContent = "Hielo";
+            break;
+        case "fighting":
+            type.classList.add("typesTable", "typesFighting");
+            type.textContent = "Lucha";
+            break;
+        case "normal":
+            type.classList.add("typesTable", "typesNormal");
+            type.textContent = "Normal";
+            break;
+        case "grass":
+            type.classList.add("typesTable", "typesGrass");
+            type.textContent = "Planta";
+            break;
+        case "psychic":
+            type.classList.add("typesTable", "typesPsychic");
+            type.textContent = "Psíquico";
+            break;
+        case "rock":
+            type.classList.add("typesTable", "typesRock");
+            type.textContent = "Roca";
+            break;
+        case "dark":
+            type.classList.add("typesTable", "typesDark");
+            type.textContent = "Siniestro";
+            break;
+        case "ground":
+            type.classList.add("typesTable", "typesGround");
+            type.textContent = "Tierra";
+            break;
+        case "poison":
+            type.classList.add("typesTable", "typesPoison");
+            type.textContent = "Veneno";
+            break;
+        case "flying":
+            type.classList.add("typesTable", "typesFlying");
+            type.textContent = "Volador";
+            break;
+    }
+
+    return type;
+}
+
 function agregarHabitat(info) {
     switch (info.habitat.name) {
         case "grassland":
@@ -271,27 +495,6 @@ function agregarHabitat(info) {
     }
 
     return habitat;
-}
-
-function agregarVarieties(info) {
-    try {
-        const pixel = document.createElement("div");
-        pixel.classList.add("pixel-pokemon");
-        
-        info.varieties.forEach(async function (vari) {
-            const pixelImg = document.createElement("img");
-            pixelImg.classList.add("pixel-img");
-
-            var dato = await buscarPokemon(vari.pokemon.name);
-            pixelImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${dato.id}.png`;
-            pixel.appendChild(pixelImg);
-        });
-
-        return pixel;
-    }
-    catch (error) {
-        console.error('Se ha producido un error:', error.message);
-    }
 }
 
 function crearCard(pokemon) {
@@ -371,18 +574,12 @@ function crearCardBack(pokemon, info) {
         habitad.textContent = "📌 Hábitat: Sin registro...";
     }
 
-    const varieties = document.createElement("p");
-    varieties.classList.add("varieties");
-    varieties.textContent = "Variantes";
-
     cardBack.appendChild(cbTitle);
     cardBack.appendChild(pokedexEntry);
     cardBack.appendChild(altura);
     cardBack.appendChild(peso);
     cardBack.appendChild(especie);
     cardBack.appendChild(habitad);
-    cardBack.appendChild(varieties);
-    cardBack.appendChild(agregarVarieties(info));
 
     return cardBack;
 }
