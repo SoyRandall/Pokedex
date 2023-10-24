@@ -10,6 +10,7 @@ const waitContainer = document.querySelector(".wait-container");
 const anterior = document.getElementById("btnAnterior");
 const siguiente = document.getElementById("btnSiguiente");
 const selectGeneraciones = document.getElementById("selectGeneraciones");
+const selectTipo = document.getElementById("selectTipo");
 const tabla = document.getElementById("table");
 const verCarta = document.getElementsByClassName("btnVer");
 
@@ -28,8 +29,6 @@ $(document).ready(function () {
         eliminarCartas(pokemonContainer);
         waitContainer.style.display = `grid`;
         buscarPokemones(Id);
-
-        $("#mdlIndiceBusqueda").modal("hide");
     });
 
 });
@@ -41,12 +40,16 @@ $(document).ready(function () {
 buscar.addEventListener("click", () => {
 
     if (dato.value === "") {
-        progressContainer.textContent = "Por favor ingresa un id o nombre de Pokémon.";
+        anterior.disabled = true;
+        siguiente.disabled = true;
+
+        eliminarCartas(pokemonContainer);
         waitContainer.style.display = `grid`;
+        progressContainer.textContent = "Es necesario ingresar un id o nombre de Pokémon.";
     }
     else {
         eliminarCartas(pokemonContainer);
-        waitContainer.style.display = `grid`;
+        progressContainer.textContent = "Buscando Pokémon por favor espera...";
         buscarPokemones(dato.value);
     }
 });
@@ -87,7 +90,7 @@ buscarTabla.addEventListener("click", () => {
         tbody.removeChild(tbody.firstChild);
     }
 
-    buscarPokemonGeneracion(selectGeneraciones.value);
+    buscarPokemonGeneracion(selectGeneraciones.value, selectTipo.value);
 });
 
 //#endregion
@@ -96,7 +99,7 @@ buscarTabla.addEventListener("click", () => {
 
 //#region Funciones buscar API
 
-async function buscarPokemonGeneracion(generacionId) {
+async function buscarPokemonGeneracion(generacionId, pTipo) {
     try {
 
         var inicio = 0
@@ -107,6 +110,14 @@ async function buscarPokemonGeneracion(generacionId) {
 
         //#region Validar Generacion
         switch (generacionId) {
+            case "todas":
+                inicio = 1;
+                final = 1010;
+                inicioEspecial = 10001
+                finalEspecial = 10254
+
+                break;
+
             case "1":
                 inicio = 1;
                 final = 151;
@@ -124,12 +135,61 @@ async function buscarPokemonGeneracion(generacionId) {
                 final = 386;
                 inicioEspecial = 10001
                 finalEspecial = 10003
-    
+
+                break;
+
+            case "4":
+                inicio = 387;
+                final = 494;
+                inicioEspecial = 10004
+                finalEspecial = 10012
+
+                break;
+
+            case "5":
+                inicio = 495;
+                final = 649;
+                inicioEspecial = 10013
+                finalEspecial = 10024
+
+                break;
+
+            case "6":
+                inicio = 650;
+                final = 721;
+                inicioEspecial = 10025
+                finalEspecial = 10090
+
+                break;
+
+            case "7":
+                inicio = 722;
+                final = 809;
+                inicioEspecial = 10091
+                finalEspecial = 10157
+
+                break;
+
+            case "8":
+                inicio = 810;
+                final = 905;
+                inicioEspecial = 10161
+                finalEspecial = 10228
+
+                break;
+
+            case "9":
+                inicio = 906;
+                final = 1017;
+                inicioEspecial = 10229
+                finalEspecial = 10328
+
                 break;
         }
         //#endregion
 
         //#region Buscar Normales
+
         for (i = inicio; i < final + 1; i++) {
             const pokemon = await buscarPokemon(i);
 
@@ -140,7 +200,15 @@ async function buscarPokemonGeneracion(generacionId) {
                 tipo2 = "No tiene";
             }
 
-            crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+            if (pTipo === "todos") {
+                crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+            }
+            else if (pokemon.types[0].type.name === pTipo) {
+                crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+            }
+            else if (pTipo === tipo2) {
+                crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+            }
         }
         //#endregion
 
@@ -149,15 +217,23 @@ async function buscarPokemonGeneracion(generacionId) {
         if (inicioEspecial > 0) {
             for (i = inicioEspecial; i < finalEspecial + 1; i++) {
                 const pokemon = await buscarPokemon(i);
-    
+
                 try {
                     tipo2 = pokemon.types[1].type.name;
                 }
                 catch {
                     tipo2 = "No tiene";
                 }
-    
-                crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+
+                if (pTipo === "todos") {
+                    crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+                }
+                else if (pokemon.types[0].type.name === pTipo) {
+                    crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+                }
+                else if (pTipo === tipo2) {
+                    crearFilas(pokemon.id, pokemon.sprites.front_default, pokemon.name, pokemon.types[0].type.name, tipo2);
+                }
             }
         }
 
@@ -188,15 +264,18 @@ async function buscarPokemones(dato) {
         var pokemon = await buscarPokemon(dato);
         var info = await buscarInfo(pokemon.species.name);
 
-        progressContainer.textContent = "Buscando Pokémon por favor espera";
+        progressContainer.textContent = "Buscando Pokémon por favor espera...";
 
         waitContainer.style.display = `none`;
         idActual = pokemon.id;
+
+        console.log(info)
 
         validarMinimo();
         crearPokemon(pokemon, info);
     }
     catch {
+        waitContainer.style.display = `grid`;
         progressContainer.textContent = "No existe ese Pokémon :(";
     }
 }
@@ -235,8 +314,8 @@ function crearFilas(pId, pSprite, pNombre, pTipo1, pTipo2) {
 
     const celdaBoton = document.createElement("td");
     celdaBoton.innerHTML = "<td><button type='button' class='btn btn-primary btnVer' id='verCarta'>" +
-                                    "<i class='bi bi-search'></i>" +
-                                "</button></td>";
+        "<i class='bi bi-search'></i>" +
+        "</button></td>";
 
     fila.appendChild(celdaId);
     fila.appendChild(celdaSprite);

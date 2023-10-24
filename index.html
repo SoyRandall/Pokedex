@@ -18,103 +18,113 @@
 </head>
 
 <body>
-    <div class="select-container">
-        <div class="row col-12 mb-4" style="margin-left: auto;">
-            <div class="row col-md-6">
-                <div class="form-group">
-                    <input class="form-control form-control" type="text" placeholder="ID o nombre del Pokémon"
-                        name="txtDato" id="txtDato">
-                </div>
-            </div>
-            <div class="row col-md-4" style="margin-right: 1px;">
-                <button type="button" class="btn btn-primary" id="buscar">
-                    <i class="bi bi-search"></i> Buscar
-                </button>
-            </div>
-            <div class="row col-md-2">
-                <button type="button" class="btn btn-info" id="buscar" data-bs-toggle="modal"
-                    data-bs-target="#mdlIndiceBusqueda">
-                    <i class="bi bi-info-circle"></i>
-                </button>
-            </div>
-        </div>
-        <div class="row col-12" style="margin: auto;">
-            <div class="btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary" name="btnAnterior" id="btnAnterior" disabled>
-                    <i class="bi bi-arrow-left"></i> Anterior
-                </button>
-                <button type="button" class="btn btn-secondary" name="btnSiguiente" id="btnSiguiente" disabled>
-                    Siguiente <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="wait-container">
-        <img class="wait-pikachu" src="./Imagenes/esperando.gif" alt="">
-        <div class="progress-container">Buscando Pokémon por favor espera.</div>
-    </div>
-    <div class="pokemon-container"></div>
-
-    <!-- Modal -->
-    <div class="modal fade modal-xl modal-dialog-scrollable" id="mdlIndiceBusqueda" data-bs-backdrop="static"
-        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">📘 índice de Busqueda</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"></span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="contenedorModal" style="padding: 10px;">
-                        <div class="row col-12 mb-4" style="margin-left: auto;">
-                            <div class="row col-md-4">
-                                <div class="form-group">
-                                    <select class="form-select" id="selectGeneraciones">
-                                        <option disabled selected>Buscar por Generación</option>
-                                        <option value="1">Generación 1 - Kanto</option>
-                                        <option value="2">Generación 2 - Johto</option>
-                                        <option value="3">Generación 3 - Hoenn</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row col-md-4">
-                                <div class="form-group">
-                                    <select class="form-select" id="45">
-                                        <option disabled selected>Buscar por Tipo</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row col-md-4" style="margin-right: 1px;">
-                                <button type="button" class="btn btn-primary" id="buscarTabla">
-                                    <i class="bi bi-search"></i> Buscar
-                                </button>
-                            </div>
-                            <div class="row col-md-12 mt-5">
-                                <table class="table" id="table">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Sprite</th>
-                                            <th>Nombre</th>
-                                            <th>Tipo Principal</th>
-                                            <th>Tipo Secundario</th>
-                                            <th>Ver Carta</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="row col-md-12 select-container-table">
+                    <div class="col-md-5">
+                        <div class="form-group" style="text-align: left;">
+                            <label class="mb-1" for="selectGeneraciones">Generaciones: </label>
+                            <select class="form-select" id="selectGeneraciones">
+                                <option value="todas">Todas</option>
+                                <option value="1">Generación 1 - Kanto</option>
+                                <option value="2">Generación 2 - Johto</option>
+                                <option value="3">Generación 3 - Hoenn</option>
+                                <option value="4">Generación 4 - Sinnoh</option>
+                                <option value="5">Generación 5 - Teselia</option>
+                                <option value="6">Generación 6 - Kalos</option>
+                                <option value="7">Generación 7 - Alola</option>
+                                <option value="8">Generación 8 - Galar</option>
+                                <option value="9">Generación 9 - Paldea</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group" style="text-align: left;">
+                            <label class="mb-1" for="selectTipos">Tipos:</label>
+                            <select class="form-select" id="selectTipo">
+                                <option value="todos">Todos</option>
+                                <option value="water">Agua</option>
+                                <option value="bug">Bicho</option>
+                                <option value="dragon">Dragón</option>
+                                <option value="electric">Eléctrico</option>
+                                <option value="ghost">Fantasma</option>
+                                <option value="fire">Fuego</option>
+                                <option value="fairy">Hada</option>
+                                <option value="ice">Hielo</option>
+                                <option value="fighting">Lucha</option>
+                                <option value="normal">Normal</option>
+                                <option value="grass">Planta</option>
+                                <option value="psychic">Psíquico</option>
+                                <option value="rock">Roca</option>
+                                <option value="dark">Siniestro</option>
+                                <option value="ground">Tierra</option>
+                                <option value="poison">Veneno</option>
+                                <option value="flying">Volador</option>
+                                <option value="steel">Acero</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4" style="display: grid;">
+                        <button type="button" class="btn btn-primary" id="buscarTabla">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div class="col-md-12 mt-5">
+                        <div class="table-container">
+                            <table class="table" id="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Sprite</th>
+                                        <th>Nombre</th>
+                                        <th>Tipo Principal</th>
+                                        <th>Tipo Secundario</th>
+                                        <th>Ver Carta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+    
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="row col-md-12 select-container">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <input class="form-control form-control" type="text" placeholder="ID o nombre del Pokémon"
+                                name="txtDato" id="txtDato">
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display: grid;">
+                        <button type="button" class="btn btn-primary" id="buscar">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div class="col-md-12 mt-3" style="display: grid;">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-secondary" name="btnAnterior" id="btnAnterior"
+                                disabled>
+                                <i class="bi bi-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-secondary" name="btnSiguiente" id="btnSiguiente"
+                                disabled>
+                                Siguiente <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="wait-container">
+                    <img class="wait-pikachu" src="./Imagenes/esperando.gif" alt="">
+                    <div class="progress-container">Por favor ingresa un id o nombre de Pokémon.</div>
+                </div>
+                <div class="pokemon-container"></div>
+            </div>
         </div>
     </div>
-
     <script src="./JavaScript/principal.js"></script>
 </body>
 
